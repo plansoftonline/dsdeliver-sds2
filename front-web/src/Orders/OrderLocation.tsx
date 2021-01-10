@@ -3,11 +3,13 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import { useState } from 'react';
 import AsyncSelect from 'react-select/async'
 import { fetchLocalMapBox } from '../api';
+import { OrderLocationData } from "./types";
 
+ 
   const initialPosition = {
-      alt: -18.45454,
-      lng: -48.26201
-  }
+    lat: -18.9110558,
+    lng: -48.26201
+}
 
 type Place = {
      label?: string;
@@ -18,7 +20,11 @@ type Place = {
      }
  }
 
-function OrderLocation() {
+ type Props = {
+     onChangeLocation: (location: OrderLocationData) => void;
+ }
+
+function OrderLocation( {onChangeLocation}:Props) {
 
     const [address, setAddress] = useState<Place>({
         position: initialPosition
@@ -35,8 +41,7 @@ function OrderLocation() {
              position: {
                lat: item.center[1],
                lng: item.center[0]
-             },
-             place: item.place_name,
+             }
            });
          });
       
@@ -45,11 +50,11 @@ function OrderLocation() {
       
       const handleChangeSelect = (place: Place) => {
         setAddress(place);
-        //   onChangeLocation({
-        //    latitude: place.position.lat,
-        //    longitude: place.position.lng,
-        //    address: place.label!
-        //  });
+          onChangeLocation({
+            latitude: place.position.lat,
+            longitude: place.position.lng,
+            address: place.label!
+          });
       };
 
 
@@ -69,16 +74,20 @@ function OrderLocation() {
                     /> 
                 </div>
 
-                <MapContainer center={[initialPosition.alt, initialPosition.lng]} zoom={15} scrollWheelZoom={false}>
+                <MapContainer 
+                    center={address.position} 
+                    zoom={15} 
+                    key={address.position.lat}
+                    scrollWheelZoom>
                     
 
                     <TileLayer
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     />
-                    <Marker  position={[initialPosition.alt, initialPosition.lng]}>
+                    <Marker  position={address.position}>
                         <Popup>
-                            meu marcador
+                            {address.label}
                         </Popup>
                     </Marker>
                 </MapContainer>
