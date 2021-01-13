@@ -3,6 +3,7 @@ package com.plansoftonline.dsdeliver.entities;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -100,6 +101,14 @@ public class Order implements Serializable {
 
 	public Set<Product> getProducts() {
 		return products;
+	}
+	
+	public Double getTotal() {
+		double soma = 0;
+		for (Product p : products) {
+			soma += p.getPrice();
+		}
+		return soma;
 	}
 
 	@Override
